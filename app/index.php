@@ -15,14 +15,12 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
 require_once './middlewares/isAdmin.php';
 require_once './middlewares/isMozo.php';
-require_once './middlewares/isGastronomico.php';
 require_once './middlewares/EstaLogeado.php';
 
 require_once './controllers/TrabajadorController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/ProductoController.php';
 require_once './controllers/PedidoController.php';
-require_once './controllers/AreaController.php';
 require_once './controllers/EncuestaController.php';
 
 // Load ENV
@@ -33,7 +31,7 @@ $dotenv->safeLoad();
 $app = AppFactory::create();
 
 // Set base path
-$app->setBasePath('/tp_laComanda/la_comanda/app');
+$app->setBasePath('/rest_aurant/app');
 
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
@@ -69,8 +67,8 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
     $group->get('[/]', \ProductoController::class . ':TraerTodos'); 
     $group->get('/search_by_id/{id}', \ProductoController::class . ':TraerUno'); 
     $group->post('/alta', \ProductoController::class . ':CargarUno');
-    $group->put('/preparar', \ProductoController::class . ':ModificarStatus')->add(new isGastronomico());
-    $group->put('/listo', \ProductoController::class . ':ModificarStatus')->add(new isGastronomico());
+    $group->put('/preparar', \ProductoController::class . ':ModificarStatus');
+    $group->put('/listo', \ProductoController::class . ':ModificarStatus');
     $group->put('/servir', \ProductoController::class . ':Servir')->add(new isMozo());
     $group->delete('/borrar', \ProductoController::class . ':BorrarUno')->add(new isAdmin());
   })->add(new EstaLogeado());
@@ -98,16 +96,6 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
     $group->put('/cerrar', \MesaController::class . ':CerrarMesa')->add(new isAdmin());
     $group->put('/cliente_cambia_mesa', \MesaController::class . ':ClienteCambiaMesa')->add(new isMozo());
     $group->delete('/borrar', \MesaController::class . ':BorrarUno')->add(new isAdmin());
-  })->add(new EstaLogeado());
-
-
-  //AREAS
-  $app->group('/areas', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \AreaController::class . ':TraerTodos'); 
-    $group->get('/listar_pendientes/{id}', \AreaController::class . ':ListarPendientes');
-    $group->get('/listar_en_preparacion/{id}', \AreaController::class . ':ListarEnPreparacion');  
-    $group->get('/listar_listos/{id}', \AreaController::class . ':ListarListos');  
-    $group->post('/alta', \AreaController::class . ':CargarUno')->add(new isAdmin());
   })->add(new EstaLogeado());
 
   //Encuestas
@@ -152,6 +140,7 @@ $app->get('[/]', function (Request $request, Response $response) {
     <div class="jumbotron">
         <header>
             <h1 class="title">Restaurant Express</h1>
+            <h2 class="subtitle"> API de uso interno. Permite chequear, cargar, modificar y borrar pedidos y mesas </h2>
         </header>
     </div>
  
@@ -161,7 +150,7 @@ $app->get('[/]', function (Request $request, Response $response) {
     </div>
 
     <div class="container">
-      <p id="pbtnPhp"><button class="btn btn-success" id="btnPhp"> TESTEAR PHP </button></p>
+      <p id="pbtnPhp"><button class="btn btn-success" id="btnCards"> Build cards </button></p>
     </div>
 
 
@@ -169,11 +158,10 @@ $app->get('[/]', function (Request $request, Response $response) {
     <div class="container cardContainer" id="cardContainer">
     </div>
 
-
-
+  <div id="divTabla"></div>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
-  <script src="./js/cards.js"></script>
+  <script src="./js/app.js" type="module"></script>
   </body>
 </html>');
     return $response;

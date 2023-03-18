@@ -21,6 +21,15 @@ body{
     color: #fff;
 }
 
+.subtitle{
+    padding-top: 0.3em;
+    padding-bottom: 0.5em;
+    font-family: Noto Sans, sans-serif;
+    text-shadow: 10px 10px 10px #000000;
+    color: #fff;
+    font-size: 2em;
+}
+
 header{
     margin-top: 1em;
     background-color: transparent;
@@ -100,8 +109,6 @@ header{
     width: 10%;
 }
 
-/*      Fin Cards       */
-
 .cardContainer {
     display: flex;
     flex-wrap: wrap;
@@ -124,6 +131,13 @@ header{
   .card-body{
     margin: 0;
   }
+
+/*      Fin Cards       */
+
+/* Tabla */
+.tabla{
+    background-color: #fff;
+}
 
 /* responsive. Override bootstrap classes to make them responsive */
 
