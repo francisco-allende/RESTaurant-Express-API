@@ -49,6 +49,14 @@ class TrabajadorController extends Trabajador implements IApiUsable
          }else{
            $payload = json_encode(array('Login' => "Clave incorrecta"));
          }
+          // Set the user session
+          //$_SESSION['user_id'] = $user->id;
+          //$_SESSION['user_role'] = $user->rol;
+      
+          // Redirect to the main entry endpoint
+          var_dump($trabajador);
+          header('Location: http://localhost/tp_laComanda/la_comanda/app/trabajador/');
+          exit;
        }else{
          $payload = json_encode(array('Login' => "No existe usuario $username"));
        }

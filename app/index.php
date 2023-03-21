@@ -41,7 +41,7 @@ $app->addBodyParsingMiddleware();
 
 
 // Routes
-$app->group('/trabajador', function (RouteCollectorProxy $group) {
+$app->group('sesion/', function (RouteCollectorProxy $group) {
   $group->post('/registrar', \TrabajadorController::class . ':Registrar');
   $group->post('/login', \TrabajadorController::class . ':Verificar');
   $group->get('[/]', \TrabajadorController::class . ':TraerTodos'); 
@@ -88,7 +88,7 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
 
   //MESAS
   $app->group('/mesas', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \MesaController::class . ':TraerTodos'); 
+    $group->post('[/]', \MesaController::class . ':TraerTodos'); 
     $group->get('/search_by_id/{id}', \MesaController::class . ':TraerUno'); 
     $group->post('/alta', \MesaController::class . ':CargarUno')->add(new isAdmin());
     $group->put('/modificar_status', \MesaController::class . ':ModificarStatus')->add(new isMozo());
@@ -96,7 +96,7 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
     $group->put('/cerrar', \MesaController::class . ':CerrarMesa')->add(new isAdmin());
     $group->put('/cliente_cambia_mesa', \MesaController::class . ':ClienteCambiaMesa')->add(new isMozo());
     $group->delete('/borrar', \MesaController::class . ':BorrarUno')->add(new isAdmin());
-  })->add(new EstaLogeado());
+  });
 
   //Encuestas
   $app->group('/encuestas', function (RouteCollectorProxy $group) {
@@ -108,22 +108,52 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
     $group->delete('/borrar', \EncuestaController::class . ':BorrarUno')->add(new isAdmin());
   })->add(new EstaLogeado());
 
+$app->get('/login', function (Request $request, Response $response) { 
+  $response->getBody()->write('
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Login</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      <link rel="stylesheet" href="./css/login.css" /> 
+    </head>
+    <body>
+      <div class="container">
+        <h1>Login</h1>
+        <form>
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required>
+          <div class="buttons">
+            <button type="submit" class="btn btn-success" id="login">Sing in</button>
+            <button type="submit" class="btn btn-primary" id="registrar">Create Account</button>
+          </div>
+          <div id="message"></div>
+        </form>
+      </div>
+      <script src="./js/login/login.js" type="module"></script>
+    </body>
+  </html>
+  ');
+    return $response;
+});
 
 
-$app->get('[/]', function (Request $request, Response $response) {    
-    $response->getBody()->write('
-    <!DOCTYPE html>
+$app->post('[/]', function (Request $request, Response $response) { 
+  $response->getBody()->write('
+<!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Principal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/styles_index.css" /> 
-</head>
-<head>
-<body>
+  </head>
+  <head>
+  <body>
     <!--Navbar-->
     <nav class="navbar navbar-expand-lg justify-content-around" style="background-color: transparent;">
         <a href="./index.html" class="navbar-brand">
@@ -143,7 +173,7 @@ $app->get('[/]', function (Request $request, Response $response) {
             <h2 class="subtitle"> API de uso interno. Permite chequear, cargar, modificar y borrar pedidos y mesas </h2>
         </header>
     </div>
- 
+
     
     <!--Spinner de carga-->
     <div id="containerSpinner">   
@@ -159,14 +189,13 @@ $app->get('[/]', function (Request $request, Response $response) {
     </div>
 
   <div id="divTabla"></div>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
   <script src="./js/app.js" type="module"></script>
   </body>
 </html>');
-    return $response;
-
-});
+  return $response;
+})->add(new EstaLogeado());
 
 $app->run();
 
