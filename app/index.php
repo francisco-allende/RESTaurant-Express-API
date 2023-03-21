@@ -16,6 +16,7 @@ require_once './db/AccesoDatos.php';
 require_once './middlewares/isAdmin.php';
 require_once './middlewares/isMozo.php';
 require_once './middlewares/EstaLogeado.php';
+require_once './middlewares/EstaLogeado_init.php';
 
 require_once './controllers/TrabajadorController.php';
 require_once './controllers/MesaController.php';
@@ -49,14 +50,14 @@ $app->group('sesion/', function (RouteCollectorProxy $group) {
 
 //TRABAJADORES
 $app->group('/trabajador', function (RouteCollectorProxy $group) {
-  //$group->get('[/]', \TrabajadorController::class . ':TraerTodos'); 
+  $group->get('[/]', \TrabajadorController::class . ':TraerTodos'); 
   $group->get('/search_by_id/{id}', \TrabajadorController::class . ':TraerUno');
   $group->get('/leer/csv', \TrabajadorController::class . ':LeerCsv');
   $group->get('/download/csv', \TrabajadorController::class . ':DescargarCsv');
   $group->put('/modificar', \TrabajadorController::class . ':ModificarUno');
   $group->post('/upload/csv', \TrabajadorController::class . ':CrearCsv');
   $group->delete('/borrar', \TrabajadorController::class . ':BorrarUno')->add(new isAdmin());
-})->add(new EstaLogeado());
+});//->add(new EstaLogeado());
 
 $app->group('/descargas', function (RouteCollectorProxy $group) {
   $group->get('/csv', \TrabajadorController::class . ':DescargarCsv');
@@ -88,7 +89,7 @@ $app->group('/descargas', function (RouteCollectorProxy $group) {
 
   //MESAS
   $app->group('/mesas', function (RouteCollectorProxy $group) {
-    $group->post('[/]', \MesaController::class . ':TraerTodos'); 
+    $group->get('[/]', \MesaController::class . ':TraerTodos'); 
     $group->get('/search_by_id/{id}', \MesaController::class . ':TraerUno'); 
     $group->post('/alta', \MesaController::class . ':CargarUno')->add(new isAdmin());
     $group->put('/modificar_status', \MesaController::class . ':ModificarStatus')->add(new isMozo());
@@ -141,6 +142,10 @@ $app->get('/login', function (Request $request, Response $response) {
 
 
 $app->post('[/]', function (Request $request, Response $response) { 
+  // Obtener el token del campo "token" del formulario
+  $token = trim($request->getParsedBody()['token']);
+  // Set the token in the "Authorization" header
+  $request = $request->withHeader('Authorization', "Bearer $token");
   $response->getBody()->write('
 <!DOCTYPE html>
 <html lang="en">
@@ -195,7 +200,7 @@ $app->post('[/]', function (Request $request, Response $response) {
   </body>
 </html>');
   return $response;
-})->add(new EstaLogeado());
+})->add(new EstaLogeado_init());
 
 $app->run();
 
