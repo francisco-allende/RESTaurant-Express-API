@@ -17,7 +17,9 @@ btnLogin.addEventListener("click", async (e)=>{
     if(username.value != "" && password.value != "")
     {
         let user = new User(username.value, password.value)
-        const res = await postLogin('http://localhost/tp_laComanda/la_comanda/app/trabajador/login', user);
+        //const res = await postLogin('http://localhost/tp_laComanda/la_comanda/app/trabajador/login', user);
+        const res = await postLogin('http://localhost/rest_aurant/app/sesion/login', user);
+        
         if(res != null){    
             if(res['Login']){
                     msj.innerHTML = res['Login']
@@ -28,7 +30,6 @@ btnLogin.addEventListener("click", async (e)=>{
                 msj.innerHTML = "Sesion iniciada con exito"
                 msj.style.color="#45a049";
                 //meter spinner, delay, algo
-                //window.location.replace("http://localhost/rest_aurant/app/?token=" + token);   
                 
                 // Create a form with a hidden field for the token
                 let form = document.createElement("form");
@@ -43,6 +44,8 @@ btnLogin.addEventListener("click", async (e)=>{
                 // Submit the form to redirect with POST
                 document.body.appendChild(form);
                 form.submit();
+            }else{
+                console.log(res['response'])
             }
         }else{
             msj.innerHTML = "Ocurrio un error, vuelva a intentarlo"

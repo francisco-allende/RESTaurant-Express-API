@@ -42,7 +42,7 @@ $app->addBodyParsingMiddleware();
 
 
 // Routes
-$app->group('sesion/', function (RouteCollectorProxy $group) {
+$app->group('/sesion', function (RouteCollectorProxy $group) {
   $group->post('/registrar', \TrabajadorController::class . ':Registrar');
   $group->post('/login', \TrabajadorController::class . ':Verificar');
   $group->get('[/]', \TrabajadorController::class . ':TraerTodos'); 
